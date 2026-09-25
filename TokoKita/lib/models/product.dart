@@ -8,6 +8,7 @@ class Product {
   String? description; // Nullable (Langkah 5)
   String? imageUrl; // Nullable
 
+
   Product({
     required this.id,
     required this.name,
@@ -60,13 +61,25 @@ double hitungTotalBelanja(List<Product> keranjang) {
 // Data Dummy 8 Produk Peralatan Sekolah (Tugas mandiri 2)
 List<Product> dummyProducts = [
   Product(id: 1, name: "Buku Tulis Sidu 38 Lembar", price: 5000, category: "Buku & Kertas", stock: 25, description: "Buku garis tebal"),
-  Product(id: 2, name: "Pensil 2B Faber Castell", price: 4000, category: "Alat Tulis", stock: 4, description: "Pensil ujian"),
+  DiscountedProduct(id: 2, name: "Pensil 2B Faber Castell", price: 4000, imageUrl: null, category: "Alat Tulis", stock: 4, description: "Pensil ujian", discountPercent: 10.0,),
   Product(id: 3, name: "Penggaris Plastik 30cm", price: 3000, category: "Alat Tulis", stock: 0),
   Product(id: 4, name: "Penghapus Joyko B40", price: 2000, category: "Alat Tulis", stock: 15),
   Product(id: 5, name: "Tipe-X Correction Tape", price: 8000, category: "Alat Tulis", stock: 10),
   Product(id: 6, name: "Tas Sekolah BackPack", price: 120000, category: "Perlengkapan", stock: 3, description: "Tas anti air"),
-  Product(id: 7, name: "Kotak Pensil Kaleng", price: 25000, category: "Perlengkapan", stock: 8),
+  DiscountedProduct(id: 7, name: "Kotak Pensil Kaleng", price: 25000, imageUrl: null, category: "Perlengkapan", stock: 8, discountPercent: 10.0,),
   Product(id: 8, name: "Set Drawing Pen 0.5", price: 15000, category: "Alat Tulis", stock: 6),
+  DiscountedProduct(id: 9, name: "Spidol Boardmarker Snowman", price: 9000, imageUrl: null, category: "Alat Tulis", stock: 20, discountPercent: 10.0,),
+  Product(id: 10, name: "Sticky Notes Warna-Warni", price: 6000, category: "Buku & Kertas", stock: 12,),
+  Product(id: 11, name: "Map Snelhepter Plastik", price: 4500, category: "Perlengkapan", stock: 30,),
+  DiscountedProduct(id: 12, name: "Stapler Medium Joyko", price: 18000, imageUrl: null, category: "Alat Tulis", stock: 5, discountPercent: 10.0,),
+  Product(id: 13, name: "Isi Stapler No. 10", price: 2500, category: "Alat Tulis", stock: 40,),
+  Product(id: 14, name: "Gunting Kertas Stainless", price: 12000, category: "Alat Tulis", stock: 9,),
+  DiscountedProduct(id: 15, name: "Binder A5 Kulit Sintetis", price: 45000, imageUrl: null, category: "Buku & Kertas", stock: 7, discountPercent: 10.0,),
+  Product(id: 16, name: "Isi Binder A5 50 Lembar", price: 8500, category: "Buku & Kertas", stock: 18,),
+  Product(id: 17, name: "Highlighter Kenko Set 4 Warna", price: 16000, category: "Alat Tulis", stock: 11,),
+  DiscountedProduct(id: 18, name: "Kalkulator Scientific Casio", price: 150000, imageUrl: null, category: "Elektronik", stock: 4, discountPercent: 10.0,),
+  Product(id: 19, name: "Paper Clip Warna Box", price: 5000, category: "Alat Tulis", stock: 22,),
+  Product(id: 20, name: "Double Tape 1 Inchi", price: 7000, category: "Alat Tulis", stock: 14,),
 ];
 
 // Fungsi main
