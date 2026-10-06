@@ -9,57 +9,72 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Toko tetap di atas
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'TokoKita',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Kebutuhan Sekolah & Kantor Lengkap',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.shopping_cart, size: 28),
-                    onPressed: () {},
-                  ),
-                ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Biru
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(
+              top: 50.0,
+              left: 16.0,
+              right: 16.0,
+              bottom: 20.0,
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'TokoKita',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Kebutuhan Sekolah & Kantor Lengkap',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.login, size: 28, color: Colors.white),
+                  tooltip: 'Login',
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+              ],
+            ),
+          ),
 
-            // ListView.builder untuk render daftar 20 produk secara efisien
-            Expanded(
-              child: ListView.builder(
-                itemCount: dummyProducts.length,
-                padding: const EdgeInsets.only(bottom: 16.0),
-                itemBuilder: (context, index) {
-                  final product = dummyProducts[index];
-                  return ProductCard(product);
-                },
-              ),
+          // ListView daftar produk
+          Expanded(
+            child: ListView.builder(
+              itemCount: dummyProducts.length,
+              padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+              itemBuilder: (context, index) {
+                final product = dummyProducts[index];
+                return ProductCard(product);
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
