@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'controllers/cart_controller.dart'; // <-- 1. IMPORT CONTROLLER-NYA DI SINI
 import 'screens/main_page.dart';
 import 'screens/product_detail_page.dart';
 import 'screens/login_page.dart';
 
 void main() {
+  // 2. INISIALISASI CONTROLLER SECARA GLOBAL SEBELUM APLIKASI DIJALANKAN
+  Get.put(CartController());
+
   runApp(const MyApp());
 }
 
@@ -12,7 +17,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'TokoKita',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'cart_page.dart';
 import 'profile_page.dart';
+import 'package:get/get.dart';
+import '../controllers/cart_controller.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -27,6 +29,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(CartController());
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

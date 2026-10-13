@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/product.dart';
+import '../screens/product_detail_page.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -26,24 +28,9 @@ class _ProductCardState extends State<ProductCard> {
         : product.price;
 
     return GestureDetector(
-      // Point 3: Menerima return value & menampilkan SnackBar
-      onTap: () async {
-        final result = await Navigator.pushNamed(
-          context,
-          '/detail',
-          arguments: product,
-        );
-
-        if (result != null && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result.toString()),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        }
+      // LANGKAH 4.1 Mengganti Navigator.pushNamed dengan Get.to()
+      onTap: () {
+        Get.to(() => ProductDetailPage(product: product));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

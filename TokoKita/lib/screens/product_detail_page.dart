@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/product.dart';
+import '../controllers/cart_controller.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product? product;
@@ -32,6 +34,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    // mengambil instance CartController menggunakan Get.find()
+    final CartController cartController = Get.find();
+
     final Product? argsProduct =
     ModalRoute.of(context)?.settings.arguments as Product?;
 
@@ -63,7 +68,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            // Navigator.pop(context);
+            Get.back();
           },
         ),
       ),
@@ -214,7 +220,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   const Divider(),
                   const SizedBox(height: 8),
 
-                  // Pengatur Jumlah Pembelian(tugas 1 praktikum 5)
+                  // Pengatur Jumlah Pembelian
                   const Text(
                     'Jumlah Pembelian',
                     style: TextStyle(
@@ -240,7 +246,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               color: Colors.blue,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 12.0),
                               child: Text(
                                 '$_quantity',
                                 style: const TextStyle(
@@ -307,10 +314,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           onPressed: currentProduct.stock == 0
               ? null
               : () {
-            // Mengembalikan jumlah barang & nama produk ke HomePage via Navigator.pop
-            Navigator.pop(
-              context,
-              '$_quantity ${currentProduct.name} berhasil ditambahkan ke keranjang!',
+            // Mengirimkan produk beserta jumlah quantity yang dipilih user
+            cartController.addToCart(currentProduct, quantity: _quantity);
+
+            // Menampilkan notifikasi pemberitahuan dengan GetX SnackBar
+            Get.snackbar(
+                'Berhasil!',
+                '$_quantity ${currentProduct.name} ditambahkan ke keranjang',
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.blueGrey, // Warna latar belakang solid (biru TokoKita)
+                colorText: Colors.white,      // Warna teks putih bersih agar kontras & jelas
+                borderRadius: 10,             // Membulatkan sudut popup
+                margin: const EdgeInsets.all(12), // Memberikan jarak dari tepi layar atas & samping
+                duration: const Duration(seconds: 2),
+                isDismissible: true,
+                icon: const Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                )
             );
           },
         ),

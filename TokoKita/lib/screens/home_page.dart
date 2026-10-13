@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/product.dart';
 import '../widgets/product_card.dart';
+import '../controllers/cart_controller.dart';
+import 'cart_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final CartController cartController = Get.find();
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Column(
@@ -52,12 +57,52 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.login, size: 28, color: Colors.white),
-                  tooltip: 'Login',
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
+                Row(
+                  children: [
+                    // Badge Keranjang Reaktif Obx
+                    Obx(() => Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.shopping_cart, size: 28, color: Colors.white),
+                          tooltip: 'Keranjang',
+                          onPressed: () {
+                            Get.to(() => const CartPage());
+                          },
+                        ),
+                        // Tampilkan badge merah jika totalItem > 0
+                        if (cartController.totalItem > 0)
+                          Positioned(
+                            right: 4,
+                            top: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                '${cartController.totalItem}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    )),
+                    const SizedBox(width: 8),
+                    // Tombol Login aslimu
+                    IconButton(
+                      icon: const Icon(Icons.login, size: 28, color: Colors.white),
+                      tooltip: 'Login',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
