@@ -3,10 +3,32 @@ import 'package:get/get.dart';
 import '../models/product.dart';
 import '../widgets/product_card.dart';
 import '../controllers/cart_controller.dart';
+import '../services/product_service.dart';
 import 'cart_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final ProductService _productService = ProductService();
+  late Future<List<Product>> _futureProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts(); // Panggil data saat halaman pertama dibuka
+  }
+
+  // Method untuk memuat / memuat ulang data (untuk Tombol Coba Lagi)
+  void _loadProducts() {
+    setState(() {
+      _futureProducts = _productService.fetchProducts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +39,7 @@ class HomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Biru
+          // Header Biru (Utuh seperti semula)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
@@ -59,7 +81,6 @@ class HomePage extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    // Badge Keranjang Reaktif Obx
                     Obx(() => Stack(
                       alignment: Alignment.center,
                       children: [
@@ -70,7 +91,6 @@ class HomePage extends StatelessWidget {
                             Get.to(() => const CartPage());
                           },
                         ),
-                        // Tampilkan badge merah jika totalItem > 0
                         if (cartController.totalItem > 0)
                           Positioned(
                             right: 4,
@@ -94,7 +114,6 @@ class HomePage extends StatelessWidget {
                       ],
                     )),
                     const SizedBox(width: 8),
-                    // Tombol Login aslimu
                     IconButton(
                       icon: const Icon(Icons.login, size: 28, color: Colors.white),
                       tooltip: 'Login',
@@ -108,14 +127,63 @@ class HomePage extends StatelessWidget {
             ),
           ),
 
-          // ListView daftar produk
+          // Body dengan FutureBuilder, penanganan error, dan Tombol Coba Lagi
           Expanded(
-            child: ListView.builder(
-              itemCount: dummyProducts.length,
-              padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-              itemBuilder: (context, index) {
-                final product = dummyProducts[index];
-                return ProductCard(product);
+            child: FutureBuilder<List<Product>>(
+              future: _futureProducts,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                // 1. Kondisi Error & Tombol Coba Lagi (Langkah 5)
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Gagal memuat produk:\n${snapshot.error}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: _loadProducts, // TOMBOL COBA LAGI (SS 5)
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Coba Lagi'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('Tidak ada produk tersedia.'),
+                  );
+                }
+
+                final products = snapshot.data!;
+                return ListView.builder(
+                  itemCount: products.length,
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ProductCard(product);
+                  },
+                );
               },
             ),
           ),

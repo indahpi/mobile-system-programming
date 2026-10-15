@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/cart_controller.dart';
-import 'cart_page.dart';
+import 'home_page.dart'; // Import HomePage agar bisa kembali ke beranda
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
@@ -83,8 +83,21 @@ class CheckoutPage extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  cartController.clearCart(); // Kosongkan keranjang setelah dibayar
-                  Get.off(() => const OrderSuccessPage()); // Pindah ke halaman sukses
+                  // 1. Kosongkan keranjang
+                  cartController.clearCart();
+
+                  // 2. Tampilkan notifikasi sukses
+                  Get.snackbar(
+                    'Pembayaran Berhasil!',
+                    'Pesanan Anda telah berhasil diproses.',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                    margin: const EdgeInsets.all(12),
+                  );
+
+                  // 3. Kembali ke HomePage dan hapus riwayat checkout
+                  Get.offAll(() => const HomePage());
                 },
                 child: const Text(
                   'Konfirmasi & Bayar',

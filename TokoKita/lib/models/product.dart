@@ -1,4 +1,3 @@
-// Class & fungsi
 class Product {
   int id;
   String name;
@@ -7,7 +6,6 @@ class Product {
   int stock;
   String? description; // Nullable (Langkah 5)
   String? imageUrl; // Nullable
-
 
   Product({
     required this.id,
@@ -20,6 +18,21 @@ class Product {
   });
 
   String getInfo() => "[$id] $name - Rp ${price.toStringAsFixed(0)} (Stok: $stock)";
+
+  // Method factory untuk parsing JSON dari API (Langkah 3)
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()),
+      name: json['title'] ?? '', // Fake Store API menggunakan key 'title'
+      price: (json['price'] is int)
+          ? (json['price'] as int).toDouble()
+          : (json['price'] ?? 0.0),
+      category: json['category'] ?? '',
+      stock: 10, // Default stock karena API tidak menyediakan field stock
+      description: json['description'] ?? '',
+      imageUrl: json['image'] ?? '', // Fake Store API menggunakan key 'image'
+    );
+  }
 
   // Tugas mandiri 1
   String getStatusStok() {
@@ -54,11 +67,13 @@ String formatRupiah(double nominal) => "Rp ${nominal.toStringAsFixed(0)}";
 // Fungsi hitungTotalBelanja (Tugas mandiri 3)
 double hitungTotalBelanja(List<Product> keranjang) {
   double total = 0;
-  for (var p in keranjang) total += p.price;
+  for (var p in keranjang) {
+    total += p.price;
+  }
   return total;
 }
 
-// Data Dummy 8 Produk Peralatan Sekolah (Tugas mandiri 2)
+// Data Dummy 20 Produk Peralatan Sekolah (Lengkap utuh punya kamu)
 List<Product> dummyProducts = [
   Product(id: 1, name: "Buku Tulis Sidu 38 Lembar", price: 5000, category: "Buku & Kertas", stock: 25, description: "Buku tulis dengan kertas berkualitas tebal 38 lembar"),
   DiscountedProduct(id: 2, name: "Pensil 2B Faber Castell", price: 4000, imageUrl: null, category: "Alat Tulis", stock: 4, description: "Pensil ujian kualitas unggul dengan tingkat kegelapan 2B yang teruji", discountPercent: 10.0,),
@@ -70,110 +85,14 @@ List<Product> dummyProducts = [
   Product(id: 8, name: "Set Drawing Pen 0.5", price: 15000, category: "Alat Tulis", stock: 6, description: "Satu set pensil menggambar dengan ketebalan 0.5mm"),
   DiscountedProduct(id: 9, name: "Spidol Boardmarker Snowman", price: 9000, imageUrl: null, category: "Alat Tulis", stock: 20, description: "Spidol papan tulis yang dapat dihapus", discountPercent: 10.0,),
   Product(id: 10, name: "Sticky Notes Warna-Warni", price: 6000, category: "Buku & Kertas", stock: 12, description: "Kertas catatan warna-warni berukuran sedang"),
-  Product(id: 11, name: "Map Plastik", price: 4500, category: "Perlengkapan", stock: 30, description: "Map plastik untuk berkas ukuran F4 (bisa digunakan untuk ukuran A4},"),
+  Product(id: 11, name: "Map Plastik", price: 4500, category: "Perlengkapan", stock: 30, description: "Map plastik untuk berkas ukuran F4 (bisa digunakan untuk ukuran A4)."),
   DiscountedProduct(id: 12, name: "Stapler Medium Joyko", price: 18000, imageUrl: null, category: "Alat Tulis", stock: 5, description: "Stapler ukuran sedang", discountPercent: 10.0,),
   Product(id: 13, name: "Isi Stapler No. 10", price: 2500, category: "Alat Tulis", stock: 40, description: "Isi stapler ukuran sedang"),
   Product(id: 14, name: "Gunting Kertas Stainless", price: 12000, category: "Alat Tulis", stock: 9, description: "Gunting kertas stainless steel tajam dan tahan karat"),
   DiscountedProduct(id: 15, name: "Binder A5 Kulit Sintetis", price: 45000, imageUrl: null, category: "Buku & Kertas", stock: 7, description: "Binder ukuran A5 berbahan kulit sintetis", discountPercent: 10.0,),
   Product(id: 16, name: "Isi Binder A5 50 Lembar", price: 8500, category: "Buku & Kertas", stock: 18, description:"Isi ulang binder A5 garis berisi 50 lembar"),
-  Product(id: 17, name: "Highlighter Kenko Set 4 Warna", price: 16000, category: "Alat Tulis", stock: 11, description:"Satu set Highlighter merk Kenko 4 warna (merah, kuning, biru, dan hijau"),
+  Product(id: 17, name: "Highlighter Kenko Set 4 Warna", price: 16000, category: "Alat Tulis", stock: 11, description:"Satu set Highlighter merk Kenko 4 warna"),
   DiscountedProduct(id: 18, name: "Kalkulator Scientific Casio", price: 150000, imageUrl: null, category: "Elektronik", stock: 4, description: "Kalkulator ilmiah dengan fitur lengkap", discountPercent: 10.0,),
   Product(id: 19, name: "Paper Clip Warna Box", price: 5000, category: "Alat Tulis", stock: 22, description: "Klip kertas plastik warna-warni isi 1 box (10 pcs)"),
   Product(id: 20, name: "Double Tape 1 Inchi", price: 7000, category: "Alat Tulis", stock: 14, description: "Double Tape berukuran 1 inci"),
 ];
-
-// Fungsi main
-void main() {
-
-  // Langkah 1 : Variabel & tipe data
-  const String namaToko = "TokoKita Indah";
-  final String tanggalMasuk = "15 September 2026";
-  var namaKasir = "Siti";
-  namaKasir = "Ahmad";
-  int stokBuku = 50;
-  double hargaBuku = 5000.0;
-  String namaProdukUtama = "Buku Tulis Sidu";
-  bool isTersedia = true;
-  List<String> daftarKategori = ['Alat Tulis', 'Buku & Kertas', 'Perlengkapan'];
-  Map<String, dynamic> dataMentah = {'id': 'SCH-001', 'nama': namaProdukUtama, 'harga': hargaBuku, 'stok': stokBuku, 'is_available': isTersedia, 'kategori': daftarKategori[1]};
-
-  print("--- LANGKAH 1: VARIABEL & TIPE DATA ---");
-  print("Toko: $namaToko | Kasir: $namaKasir ($tanggalMasuk)");
-  print("Produk: $namaProdukUtama | Harga: Rp $hargaBuku | Stok: $stokBuku | Available: $isTersedia");
-  print("Kategori: $daftarKategori");
-  print("Data Mentah: $dataMentah\n");
-
-
-  // Langkah 2: Operator perhitungan harga
-  int jumlahBeli = 5;
-  double totalAwal = hargaBuku * jumlahBeli;
-  int sisaStok = stokBuku - jumlahBeli;
-  bool apakahMahal = hargaBuku > 10000;
-  bool apakahStokCukup = sisaStok >= 0;
-  bool layakTampilkan = (sisaStok > 0) && (hargaBuku > 0);
-
-  print("--- LANGKAH 2: OPERATOR PERHITUNGAN HARGA ---");
-  print("Total Beli ($jumlahBeli item): Rp $totalAwal | Sisa Stok: $sisaStok");
-  print("Harga > 10k: $apakahMahal | Stok Cukup: $apakahStokCukup | Layak Tampil: $layakTampilkan\n");
-
-
-  // Langkah 3: Control flow
-  String statusStokText = (stokBuku > 5) ? 'Tersedia' : ((stokBuku > 0) ? 'Stok Terbatas' : 'Habis');
-  List<double> daftarHargaBelanja = [5000.0, 4000.0, 15000.0];
-  double totalBelanjaLoop = 0;
-  for (var h in daftarHargaBelanja) totalBelanjaLoop += h;
-
-  print("--- LANGKAH 3: CONTROL FLOW ---");
-  print("1. Status Stok Buku: $statusStokText");
-  print("2. Total Loop Belanja: Rp $totalBelanjaLoop");
-  print("3. Simulasi Penjualan Pensil (While Loop):");
-  int simulasiStok = 3;
-  while (simulasiStok > 0) {
-    simulasiStok--;
-    print("   - Terjual 1, sisa stok: $simulasiStok");
-  }
-  String katProduk = 'Alat Tulis';
-  double diskonKat = (katProduk == 'Alat Tulis') ? 10.0 : 0.0;
-  print("4. Diskon Kategori '$katProduk': $diskonKat%\n");
-
-
-  // Langkah 4: fungsi logika produk & diskon
-  double hrgAwal = 120000.0;
-  print("--- LANGKAH 4: FUNCTION LOGIKA PRODUK & DISKON ---");
-  print("Harga Awal Tas: ${formatRupiah(hrgAwal)}");
-  print("Diskon Biasa (10%): ${formatRupiah(hitungHargaDiskonBiasa(hrgAwal, 10))}");
-  print("Diskon Named Param (15%): ${formatRupiah(hitungHargaSetelahDiskon(harga: hrgAwal, persenDiskon: 15))}\n");
-
-
-  // Langkah 5: class product, inheritance & null safety
-  Product p1 = Product(id: 101, name: "Seragam SMA", price: 85000, imageUrl: "SeragamSMA.jpg",
-      category: "Perlengkapan", stock: 12, description: "Bahan katun");
-  DiscountedProduct p2 = DiscountedProduct(id: 102, name: "Set Crayon 24 Warna", price: 45000,
-      imageUrl: "Crayon24.jpg", category: "Alat Tulis", stock: 5, discountPercent: 20);
-
-  print("--- LANGKAH 5: CLASS, INHERITANCE & NULL SAFETY ---");
-  print("Product 1: ${p1.getInfo()} | Deskripsi: ${p1.description ?? 'Tidak Ada'}");
-  print("Product 2: ${p2.getInfo()} | Harga Diskon: ${formatRupiah(p2.hitungHargaFinal())}\n");
-
-
-  // Tugas mandiri 1: method getStatusStok()
-  print("--- TUGAS MANDIRI 1: METHOD getStatusStok() ---");
-  print("${dummyProducts[0].name} (Stok 25) -> Status: ${dummyProducts[0].getStatusStok()}");
-  print("${dummyProducts[1].name} (Stok 4)  -> Status: ${dummyProducts[1].getStatusStok()}");
-  print("${dummyProducts[2].name} (Stok 0)  -> Status: ${dummyProducts[2].getStatusStok()}\n");
-
-
-  // Tugas mandiri 2: List 8 dummy product
-  print("--- TUGAS MANDIRI 2: LIST 8 DUMMY PRODUK ---");
-  for (int i = 0; i < dummyProducts.length; i++) {
-    print("${i + 1}. ${dummyProducts[i].getInfo()} | Status: ${dummyProducts[i].getStatusStok()}");
-  }
-  print("");
-
-
-  // Tugas mandiri 3: fungsi hitungTotalBelanja()
-  List<Product> keranjang = [dummyProducts[0], dummyProducts[1], dummyProducts[5]];
-  print("--- TUGAS MANDIRI 3: FUNCTION hitungTotalBelanja() ---");
-  print("Daftar Belanja: ${keranjang.map((e) => e.name).join(', ')}");
-  print("Total Belanja Keseluruhan: ${formatRupiah(hitungTotalBelanja(keranjang))}");
-}

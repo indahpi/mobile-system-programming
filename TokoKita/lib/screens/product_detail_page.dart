@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/product.dart';
 import '../controllers/cart_controller.dart';
+import '../services/product_service.dart'; // <-- 1. Diimport untuk akses fetchProductDetail
 
 class ProductDetailPage extends StatefulWidget {
   final Product? product;
+  final int? productId; // <-- 2. Tambahan parameter opsional ID untuk alternatif fetch API
 
-  const ProductDetailPage({super.key, this.product});
+  const ProductDetailPage({super.key, this.product, this.productId});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  // State untuk menyimpan jumlah barang yang dibeli
   int _quantity = 1;
+  final ProductService _productService = ProductService(); // Instance service API
 
   void _increment(int maxStock) {
     if (_quantity < maxStock) {
@@ -34,20 +36,67 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // mengambil instance CartController menggunakan Get.find()
-    final CartController cartController = Get.find();
+    // Jika objek produk dikirim langsung via navigasi, gunakan langsung
+    if (widget.product != null) {
+      return _buildProductView(context, widget.product!);
+    }
 
-    final Product? argsProduct =
-    ModalRoute.of(context)?.settings.arguments as Product?;
-
-    final Product? currentProduct = widget.product ?? argsProduct;
-
-    if (currentProduct == null) {
+    // Jika hanya productId yang dikirim, gunakan FutureBuilder untuk fetch data dari API (Tugas Mandiri 1)
+    if (widget.productId != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Detail Produk')),
-        body: const Center(child: Text('Data produk tidak ditemukan.')),
+        appBar: AppBar(
+          title: const Text('Detail Produk'),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Get.back(),
+          ),
+        ),
+        body: FutureBuilder<Product>(
+          future: _productService.fetchProductDetail(widget.productId!),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Gagal memuat detail produk:\n${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              );
+            }
+
+            if (!snapshot.hasData) {
+              return const Center(child: Text('Data produk tidak ditemukan.'));
+            }
+
+            return _buildProductView(context, snapshot.data!);
+          },
+        ),
       );
     }
+
+    // Fallback jika keduanya null
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Detail Produk'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: const Center(child: Text('Data produk tidak ditemukan.')),
+    );
+  }
+
+  // Method helper untuk merender UI detail produk (agar bersih dan bisa dipakai ulang)
+  Widget _buildProductView(BuildContext context, Product currentProduct) {
+    final CartController cartController = Get.find();
 
     final DiscountedProduct? discountedProduct =
     currentProduct is DiscountedProduct ? currentProduct : null;
@@ -57,22 +106,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ? discountedProduct.hitungHargaFinal()
         : currentProduct.price;
 
-    // Hitung total harga berdasarkan jumlah produk yang dipilih
     final double totalPrice = finalPrice * _quantity;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: widget.product != null
+          ? AppBar(
         title: const Text('Detail Produk'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Navigator.pop(context);
-            Get.back();
-          },
+          onPressed: () => Get.back(),
         ),
-      ),
+      )
+          : null, // AppBar sudah dihandle di FutureBuilder jika via ID
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,24 +361,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           onPressed: currentProduct.stock == 0
               ? null
               : () {
-            // Mengirimkan produk beserta jumlah quantity yang dipilih user
             cartController.addToCart(currentProduct, quantity: _quantity);
-
-            // Menampilkan notifikasi pemberitahuan dengan GetX SnackBar
             Get.snackbar(
-                'Berhasil!',
-                '$_quantity ${currentProduct.name} ditambahkan ke keranjang',
-                snackPosition: SnackPosition.TOP,
-                backgroundColor: Colors.blueGrey, // Warna latar belakang solid (biru TokoKita)
-                colorText: Colors.white,      // Warna teks putih bersih agar kontras & jelas
-                borderRadius: 10,             // Membulatkan sudut popup
-                margin: const EdgeInsets.all(12), // Memberikan jarak dari tepi layar atas & samping
-                duration: const Duration(seconds: 2),
-                isDismissible: true,
-                icon: const Icon(
-                  Icons.check_circle,
-                  color: Colors.white,
-                )
+              'Berhasil!',
+              '$_quantity ${currentProduct.name} ditambahkan ke keranjang',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.blueGrey,
+              colorText: Colors.white,
+              borderRadius: 10,
+              margin: const EdgeInsets.all(12),
+              duration: const Duration(seconds: 2),
+              isDismissible: true,
+              icon: const Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
             );
           },
         ),
